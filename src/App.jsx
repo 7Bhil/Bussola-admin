@@ -4,7 +4,7 @@ import api from './api'
 
 export default function App() {
   const username = localStorage.getItem('username') || 'Administrateur'
-  const [data, setData] = useState({ news: [], actions: [], messages: [], subscribers: [], traffic: [], testimonials: [] })
+  const [data, setData] = useState({ news: [], actions: [], messages: [], subscribers: [], testimonials: [] })
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -13,7 +13,6 @@ export default function App() {
       api.get('/actions'),
       api.get('/messages'),
       api.get('/subscribers'),
-      api.get('/traffic/stats'),
       api.get('/testimonials/admin'),
     ]).then(results => {
       setData({
@@ -21,14 +20,12 @@ export default function App() {
         actions: results[1].status === 'fulfilled' ? results[1].value.data : [],
         messages: results[2].status === 'fulfilled' ? results[2].value.data : [],
         subscribers: results[3].status === 'fulfilled' ? results[3].value.data : [],
-        traffic: results[4].status === 'fulfilled' ? results[4].value.data : [],
-        testimonials: results[5].status === 'fulfilled' ? results[5].value.data : [],
+        testimonials: results[4].status === 'fulfilled' ? results[4].value.data : [],
       })
     }).finally(() => setLoading(false))
   }, [])
 
   const stats = useMemo(() => ([
-    { label: 'Visites', value: data.traffic.reduce((acc, curr) => acc + curr.visits, 0), to: '/traffic', detail: 'Visites totales (30j)' },
     { label: 'Actualités', value: data.news.length, to: '/news', detail: 'Articles publiés' },
     { label: 'Témoignages', value: data.testimonials.length, to: '/testimonials', detail: "Retours d'impact" },
     { label: 'Messages', value: data.messages.length, to: '/messages', detail: 'Demandes reçues' },

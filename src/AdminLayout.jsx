@@ -9,10 +9,6 @@ export default function AdminLayout({ children }) {
   const username = localStorage.getItem('username') || 'Administrateur'
   const [open, setOpen] = useState(false)
 
-  useEffect(() => {
-    api.post('/traffic/track-admin').catch(() => {})
-  }, [])
-
   const logout = () => {
     localStorage.removeItem('token')
     localStorage.removeItem('username')
@@ -28,7 +24,6 @@ export default function AdminLayout({ children }) {
     { path: '/messages', label: 'Messages', hint: 'Contact public' },
     { path: '/subscribers', label: 'Abonnés', hint: 'Newsletter' },
     { path: '/users', label: 'Utilisateurs', hint: 'Gestion d\'accès' },
-    { path: '/traffic', label: 'Trafic', hint: 'Analyse des visites' },
     { path: '/profile', label: 'Mon Profil', hint: 'Sécurité et compte' },
   ]
 

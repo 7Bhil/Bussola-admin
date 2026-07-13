@@ -13,7 +13,6 @@ import UsersPage from './UsersPage'
 import PrivateRoute from './routes/PrivateRoute'
 import AdminLayout from './AdminLayout'
 import ProfilePage from './ProfilePage'
-import TrafficPage from './TrafficPage'
 import api from './api'
 import './index.css'
 
@@ -37,7 +36,6 @@ function Root() {
 				<Route path="/messages" element={<PrivateRoute><AdminLayout><MessagesPage /></AdminLayout></PrivateRoute>} />
 				<Route path="/subscribers" element={<PrivateRoute><AdminLayout><SubscribersPage /></AdminLayout></PrivateRoute>} />
 				<Route path="/users" element={<PrivateRoute><AdminLayout><UsersPage /></AdminLayout></PrivateRoute>} />
-				<Route path="/traffic" element={<PrivateRoute><AdminLayout><TrafficPage /></AdminLayout></PrivateRoute>} />
 				<Route path="/profile" element={<PrivateRoute><AdminLayout><ProfilePage /></AdminLayout></PrivateRoute>} />
 			</Routes>
 		</BrowserRouter>
