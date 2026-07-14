@@ -68,6 +68,8 @@ export default function ActionForm({ onSaved, initial, onCancel }) {
 
   const save = async () => {
     if (!formData.title || !formData.description) return alert("Le titre et la description sont requis")
+    if (!formData.location) return alert("La localisation est requise")
+    if (!formData.project) return alert("Le projet parent est requis")
     try {
       if (initial?._id) {
         await api.patch(`/actions/${initial._id}`, formData)
@@ -133,8 +135,8 @@ export default function ActionForm({ onSaved, initial, onCancel }) {
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-1">Localisation</label>
-              <input name="location" value={formData.location} onChange={handleChange} placeholder="Ex: Bukavu, Sud-Kivu" className="input-field" />
+              <label className="block text-sm font-semibold text-slate-700 mb-1">Localisation *</label>
+              <input name="location" value={formData.location} onChange={handleChange} placeholder="Ex: Bukavu, Sud-Kivu" className="input-field" required />
             </div>
 
             <div>
