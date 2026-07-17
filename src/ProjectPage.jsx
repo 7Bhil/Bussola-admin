@@ -2,6 +2,10 @@ import React, { useEffect, useState } from 'react'
 import api from './api'
 import ProjectForm from './ProjectForm'
 
+// Projets legacy à ignorer (ne doivent pas apparaître dans l'admin)
+const LEGACY_TITLES = new Set(['pageda', 'yes', 'tedidjo'])
+const isLegacy = (p) => LEGACY_TITLES.has(p.title.trim().toLowerCase())
+
 export default function ProjectPage() {
   const [items, setItems] = useState([])
   const [editing, setEditing] = useState(null)
@@ -9,7 +13,15 @@ export default function ProjectPage() {
 
   const load = () => {
     setLoading(true)
-    api.get('/projects').then(res => setItems(res.data)).catch(() => {}).finally(() => setLoading(false))
+    api.get('/projects')
+      .then(res => {
+        const filtered = res.data
+          .filter(p => !isLegacy(p))
+          .sort((a, b) => (a.order ?? 0) - (b.order ?? 0) || a.title.localeCompare(b.title))
+        setItems(filtered)
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false))
   }
 
   useEffect(() => { load() }, [])

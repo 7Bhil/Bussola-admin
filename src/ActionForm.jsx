@@ -5,6 +5,10 @@ import imageCompression from 'browser-image-compression'
 const CATEGORIES = ['Santé', 'Éducation', 'Droit', 'Social', 'Environnement']
 const STATUSES = ['En attente', 'En cours', 'Terminé']
 
+// Projets legacy à ignorer partout dans l'interface admin
+const LEGACY_TITLES = new Set(['pageda', 'yes', 'tedidjo'])
+const isLegacy = (p) => LEGACY_TITLES.has(p.title.trim().toLowerCase())
+
 export default function ActionForm({ onSaved, initial, onCancel }) {
   const [projects, setProjects] = React.useState([])
   const [formData, setFormData] = useState({
@@ -22,7 +26,15 @@ export default function ActionForm({ onSaved, initial, onCancel }) {
   const [uploading, setUploading] = useState(false)
 
   React.useEffect(() => {
-    api.get('/projects').then(res => setProjects(res.data)).catch(() => {})
+    api.get('/projects')
+      .then(res => {
+        // Filtrer les projets legacy et trier par ordre
+        const filtered = res.data
+          .filter(p => !isLegacy(p))
+          .sort((a, b) => (a.order ?? 0) - (b.order ?? 0) || a.title.localeCompare(b.title))
+        setProjects(filtered)
+      })
+      .catch(() => {})
   }, [])
 
   const handleChange = (e) => {

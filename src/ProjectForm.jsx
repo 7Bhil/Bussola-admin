@@ -2,13 +2,15 @@ import React, { useState } from 'react'
 import api from './api'
 import imageCompression from 'browser-image-compression'
 
+
 export default function ProjectForm({ onSaved, initial, onCancel }) {
   const [formData, setFormData] = useState({
     title: initial?.title || '',
     description: initial?.description || '',
     coverImage: initial?.coverImage || '',
     color: initial?.color || '#3498db',
-    order: initial?.order || 0
+    order: initial?.order || 0,
+    pillar: initial?.pillar || ''
   })
   const [uploading, setUploading] = useState(false)
 
@@ -55,7 +57,7 @@ export default function ProjectForm({ onSaved, initial, onCancel }) {
           <h3 className="text-xl font-bold text-slate-950">
             {initial?._id ? 'Modifier le projet' : 'Nouveau projet'}
           </h3>
-          <p className="text-sm text-slate-500">Un projet est un pilier majeur de l'ONG (ex: Santé, Éducation).</p>
+          <p className="text-sm text-slate-500">Créez un projet pour regrouper des actions dans la galerie.</p>
         </div>
 
         <div className="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
