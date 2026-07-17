@@ -7,10 +7,18 @@ export default function ProfilePage() {
   const [passwords, setPasswords] = useState({ currentPassword: '', newPassword: '', confirmPassword: '' })
   const [status, setStatus] = useState({ type: null, message: '' })
   const [updating, setUpdating] = useState(false)
+  const [previousLogin, setPreviousLogin] = useState({ lastLoginAt: null, lastDevice: null })
 
   useEffect(() => {
     api.get('/auth/me')
-      .then(res => setUser(res.data))
+      .then(res => {
+        setUser(res.data)
+        // Récupérer les données de connexion précédente depuis localStorage
+        const storedPreviousLogin = localStorage.getItem('previousLogin')
+        if (storedPreviousLogin) {
+          setPreviousLogin(JSON.parse(storedPreviousLogin))
+        }
+      })
       .catch(() => {})
       .finally(() => setLoading(false))
   }, [])
@@ -75,7 +83,7 @@ export default function ProfilePage() {
               <div>
                 <label className="text-xs font-semibold uppercase tracking-wider text-slate-400">Dernière connexion</label>
                 <div className="mt-1 text-slate-900 font-medium">
-                  {user.lastLoginAt ? new Date(user.lastLoginAt).toLocaleString('fr-FR', {
+                  {previousLogin.lastLoginAt ? new Date(previousLogin.lastLoginAt).toLocaleString('fr-FR', {
                     day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit'
                   }) : 'Première connexion'}
                 </div>
@@ -83,7 +91,7 @@ export default function ProfilePage() {
               <div>
                 <label className="text-xs font-semibold uppercase tracking-wider text-slate-400">Appareil utilisé</label>
                 <div className="mt-1 text-sm text-slate-600 font-mono bg-slate-50 p-3 rounded-xl border border-slate-100 break-words">
-                  {user.lastDevice || 'Non renseigné'}
+                  {previousLogin.lastDevice || 'Non renseigné'}
                 </div>
               </div>
             </div>

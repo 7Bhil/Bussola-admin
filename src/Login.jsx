@@ -16,6 +16,13 @@ export default function Login({ onLogin }) {
       if (res.data?.token) {
         localStorage.setItem('token', res.data.token)
       }
+      // Stocker les données de connexion précédente
+      if (res.data?.previousLoginAt || res.data?.previousDevice) {
+        localStorage.setItem('previousLogin', JSON.stringify({
+          lastLoginAt: res.data.previousLoginAt,
+          lastDevice: res.data.previousDevice
+        }))
+      }
       onLogin(res.data)
     } catch (err) {
       setError(err.response?.data?.message || "Identifiants invalides")
