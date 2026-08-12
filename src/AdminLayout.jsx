@@ -17,6 +17,7 @@ export default function AdminLayout({ children }) {
 
   const navItems = [
     { path: '/', label: 'Dashboard', hint: 'Vue générale' },
+    { path: '/traffic', label: 'Trafic', hint: 'Analytics du site' },
     { path: '/news', label: 'Actualités', hint: 'Articles et annonces' },
     { path: '/projects', label: 'Projets', hint: 'Piliers de l\'ONG' },
     { path: '/actions', label: 'Actions', hint: 'Programmes terrain' },
