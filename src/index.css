@@ -2,70 +2,91 @@
 @tailwind components;
 @tailwind utilities;
 
-html,
-body,
-#root {
-  min-height: 100%;
+@layer base {
+  html,
+  body,
+  #root {
+    min-height: 100%;
+  }
+
+  body {
+    margin: 0;
+    background-color: #f8fafc;
+    color: #0f172a;
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
 }
 
-body {
-  margin: 0;
-  background: #f6f7fb;
-  color: #152033;
-  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
 }
 
 @layer components {
   .page-shell {
-    @apply space-y-6;
+    @apply space-y-6 animate-fade-in;
   }
 
   .page-header {
-    @apply flex flex-col gap-4 rounded-2xl border border-slate-200 bg-white px-5 py-5 shadow-sm md:flex-row md:items-center md:justify-between;
+    @apply flex flex-col gap-4 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm md:flex-row md:items-center md:justify-between;
   }
 
   .eyebrow {
-    @apply text-xs font-semibold uppercase tracking-[0.18em] text-primary;
+    @apply text-xs font-bold uppercase tracking-widest text-[#2764ae] flex items-center gap-1.5;
   }
 
   .page-title {
-    @apply mt-1 text-2xl font-bold tracking-tight text-slate-950 md:text-3xl;
+    @apply mt-1 text-2xl font-extrabold tracking-tight text-slate-900 md:text-3xl;
   }
 
   .page-subtitle {
-    @apply mt-2 max-w-2xl text-sm leading-6 text-slate-500;
+    @apply mt-1 max-w-2xl text-sm font-medium leading-relaxed text-slate-500;
   }
 
   .input-field {
-    @apply w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-primary focus:ring-4 focus:ring-blue-100;
+    @apply w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-[#2764ae] focus:ring-4 focus:ring-[#2764ae]/10 hover:border-slate-400;
   }
 
   .select-field {
-    @apply w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition focus:border-primary focus:ring-4 focus:ring-blue-100;
+    @apply w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 outline-none transition focus:border-[#2764ae] focus:ring-4 focus:ring-[#2764ae]/10 hover:border-slate-400;
   }
 
   .textarea-field {
-    @apply w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm leading-6 text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-primary focus:ring-4 focus:ring-blue-100;
+    @apply w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm leading-relaxed text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-[#2764ae] focus:ring-4 focus:ring-[#2764ae]/10 hover:border-slate-400;
   }
 
+  /* SOLID HIGH-CONTRAST BUTTONS - NO FLASHY IA GRADIENTS */
   .btn-primary {
-    @apply inline-flex items-center justify-center rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-800 disabled:cursor-not-allowed disabled:opacity-60;
+    @apply inline-flex items-center justify-center gap-2 rounded-xl bg-[#2764ae] px-4 py-2.5 text-sm font-bold text-white shadow-sm transition hover:bg-[#1f5291] focus:ring-4 focus:ring-[#2764ae]/20 disabled:cursor-not-allowed disabled:opacity-60;
   }
 
   .btn-secondary {
-    @apply inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50;
+    @apply inline-flex items-center justify-center gap-2 rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-400 hover:bg-slate-50 hover:text-slate-900 disabled:cursor-not-allowed disabled:opacity-50;
   }
 
   .btn-danger {
-    @apply inline-flex items-center justify-center rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm font-semibold text-red-700 transition hover:bg-red-100;
+    @apply inline-flex items-center justify-center gap-2 rounded-xl border border-rose-200 bg-rose-50 px-3.5 py-2 text-sm font-semibold text-rose-700 shadow-sm transition hover:bg-rose-100 hover:text-rose-900;
   }
 
   .card {
-    @apply rounded-2xl border border-slate-200 bg-white shadow-sm;
+    @apply rounded-2xl border border-slate-200 bg-white shadow-sm transition-all duration-200;
   }
 
   .stat-card {
-    @apply rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md;
+    @apply relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md hover:border-slate-300;
   }
 
   .table-wrap {
@@ -73,26 +94,35 @@ body {
   }
 
   .table-head {
-    @apply bg-slate-50 text-left text-xs font-semibold uppercase tracking-wider text-slate-500;
+    @apply border-b border-slate-200 bg-slate-50 text-left text-xs font-bold uppercase tracking-wider text-slate-600;
   }
 
   .table-cell {
-    @apply px-5 py-4 align-top;
+    @apply px-6 py-4 align-middle text-sm text-slate-800;
   }
 
   .badge {
-    @apply inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold;
+    @apply inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold tracking-wide;
   }
 
   .empty-state {
-    @apply rounded-2xl border border-dashed border-slate-300 bg-white px-6 py-12 text-center text-slate-500;
+    @apply rounded-2xl border-2 border-dashed border-slate-300 bg-white px-6 py-12 text-center font-medium text-slate-500;
   }
 
   .form-panel {
-    @apply rounded-2xl border border-slate-200 bg-white p-5 shadow-sm;
+    @apply rounded-2xl border border-slate-200 bg-white p-6 shadow-sm;
   }
 
   .field-label {
-    @apply mb-1.5 block text-sm font-semibold text-slate-700;
+    @apply mb-2 block text-xs font-bold uppercase tracking-wider text-slate-700;
   }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(3px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.2s ease-out forwards;
 }
