@@ -176,6 +176,28 @@ export default function Login({ onLogin }) {
             </a>
           </div>
         </div>
+
+        {/* Discrete Developer Credits */}
+        <p className="mt-6 text-center text-xs text-slate-500">
+          Développement web :{' '}
+          <a
+            href="https://7bhil.vercel.app"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-slate-400 hover:text-white font-medium transition underline-offset-2 hover:underline"
+          >
+            CHITOU Bhilal
+          </a>
+          {' '}&amp;{' '}
+          <a
+            href="https://portfolio-jolidon-v2.vercel.app/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-slate-400 hover:text-white font-medium transition underline-offset-2 hover:underline"
+          >
+            HOUGUE Jolidon
+          </a>
+        </p>
       </div>
     </div>
   )
