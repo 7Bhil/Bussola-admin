@@ -2,127 +2,182 @@
 @tailwind components;
 @tailwind utilities;
 
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
 @layer base {
-  html,
-  body,
-  #root {
-    min-height: 100%;
-  }
+  html, body, #root { min-height: 100%; }
 
   body {
     margin: 0;
-    background-color: #f8fafc;
+    background-color: #f1f5f9;
     color: #0f172a;
-    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
+
+  * { box-sizing: border-box; }
 }
 
-/* Custom Scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 9999px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
-}
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
+::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
 @layer components {
-  .page-shell {
-    @apply space-y-6 animate-fade-in;
-  }
 
-  .page-header {
-    @apply flex flex-col gap-4 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm md:flex-row md:items-center md:justify-between;
-  }
+  /* ── Layout ── */
+  .page-shell { @apply space-y-6 animate-fade-in; }
 
-  .eyebrow {
-    @apply text-xs font-bold uppercase tracking-widest text-[#2764ae] flex items-center gap-1.5;
-  }
-
-  .page-title {
-    @apply mt-1 text-2xl font-extrabold tracking-tight text-slate-900 md:text-3xl;
-  }
-
-  .page-subtitle {
-    @apply mt-1 max-w-2xl text-sm font-medium leading-relaxed text-slate-500;
-  }
-
+  /* ── Form Inputs ── */
   .input-field {
-    @apply w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-[#2764ae] focus:ring-4 focus:ring-[#2764ae]/10 hover:border-slate-400;
+    @apply w-full rounded-lg border border-slate-200 bg-white px-3.5 py-2.5 text-sm
+           text-slate-900 shadow-sm outline-none transition-all placeholder:text-slate-400
+           focus:border-[#2764ae] focus:shadow-[0_0_0_3px_rgba(39,100,174,0.12)]
+           hover:border-slate-300;
   }
 
   .select-field {
-    @apply w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 outline-none transition focus:border-[#2764ae] focus:ring-4 focus:ring-[#2764ae]/10 hover:border-slate-400;
+    @apply w-full rounded-lg border border-slate-200 bg-white px-3.5 py-2.5 text-sm
+           text-slate-900 shadow-sm outline-none transition-all
+           focus:border-[#2764ae] focus:shadow-[0_0_0_3px_rgba(39,100,174,0.12)]
+           hover:border-slate-300;
   }
 
   .textarea-field {
-    @apply w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm leading-relaxed text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-[#2764ae] focus:ring-4 focus:ring-[#2764ae]/10 hover:border-slate-400;
-  }
-
-  /* SOLID HIGH-CONTRAST BUTTONS - NO FLASHY IA GRADIENTS */
-  .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 rounded-xl bg-[#2764ae] px-4 py-2.5 text-sm font-bold text-white shadow-sm transition hover:bg-[#1f5291] focus:ring-4 focus:ring-[#2764ae]/20 disabled:cursor-not-allowed disabled:opacity-60;
-  }
-
-  .btn-secondary {
-    @apply inline-flex items-center justify-center gap-2 rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-400 hover:bg-slate-50 hover:text-slate-900 disabled:cursor-not-allowed disabled:opacity-50;
-  }
-
-  .btn-danger {
-    @apply inline-flex items-center justify-center gap-2 rounded-xl border border-rose-200 bg-rose-50 px-3.5 py-2 text-sm font-semibold text-rose-700 shadow-sm transition hover:bg-rose-100 hover:text-rose-900;
-  }
-
-  .card {
-    @apply rounded-2xl border border-slate-200 bg-white shadow-sm transition-all duration-200;
-  }
-
-  .stat-card {
-    @apply relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md hover:border-slate-300;
-  }
-
-  .table-wrap {
-    @apply overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm;
-  }
-
-  .table-head {
-    @apply border-b border-slate-200 bg-slate-50 text-left text-xs font-bold uppercase tracking-wider text-slate-600;
-  }
-
-  .table-cell {
-    @apply px-6 py-4 align-middle text-sm text-slate-800;
-  }
-
-  .badge {
-    @apply inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold tracking-wide;
-  }
-
-  .empty-state {
-    @apply rounded-2xl border-2 border-dashed border-slate-300 bg-white px-6 py-12 text-center font-medium text-slate-500;
-  }
-
-  .form-panel {
-    @apply rounded-2xl border border-slate-200 bg-white p-6 shadow-sm;
+    @apply w-full rounded-lg border border-slate-200 bg-white px-3.5 py-2.5 text-sm
+           leading-relaxed text-slate-900 shadow-sm outline-none transition-all
+           placeholder:text-slate-400 resize-none
+           focus:border-[#2764ae] focus:shadow-[0_0_0_3px_rgba(39,100,174,0.12)]
+           hover:border-slate-300;
   }
 
   .field-label {
-    @apply mb-2 block text-xs font-bold uppercase tracking-wider text-slate-700;
+    @apply block text-[11px] font-bold uppercase tracking-widest text-slate-500 mb-1.5;
+  }
+
+  /* ── Buttons ── */
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg bg-[#2764ae]
+           px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-all
+           hover:bg-[#1f5291] hover:shadow-md active:scale-[0.98]
+           focus:outline-none focus:ring-2 focus:ring-[#2764ae]/40
+           disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg border border-slate-200
+           bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition-all
+           hover:bg-slate-50 hover:border-slate-300 active:scale-[0.98]
+           focus:outline-none disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  .btn-danger {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg border border-red-200
+           bg-red-50 px-4 py-2 text-sm font-semibold text-red-700 shadow-sm transition-all
+           hover:bg-red-100 hover:text-red-800 active:scale-[0.98];
+  }
+
+  /* ── Cards / Tables ── */
+  .card {
+    @apply rounded-xl border border-slate-200 bg-white shadow-sm transition-all duration-200;
+  }
+
+  .stat-card {
+    @apply relative overflow-hidden rounded-xl border border-slate-200 bg-white p-5 shadow-sm
+           transition-all hover:-translate-y-px hover:shadow-md hover:border-slate-300;
+  }
+
+  .table-wrap {
+    @apply overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm;
+  }
+
+  .table-head {
+    @apply border-b border-slate-100 bg-slate-50/80 text-left text-[11px] font-bold
+           uppercase tracking-widest text-slate-500;
+  }
+
+  .table-cell { @apply px-5 py-4 align-middle text-sm; }
+
+  .badge {
+    @apply inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-semibold tracking-wide;
+  }
+
+  .empty-state {
+    @apply rounded-xl border-2 border-dashed border-slate-200 bg-white/60 px-6 py-14
+           text-center text-sm font-medium text-slate-400;
+  }
+
+  /* ── Modal Overlay ── */
+  .modal-overlay {
+    @apply fixed inset-0 z-50 overflow-y-auto bg-slate-950/50 backdrop-blur-[2px];
+  }
+
+  .modal-panel {
+    @apply relative mx-auto my-8 w-full max-w-2xl rounded-2xl border border-slate-100
+           bg-white shadow-2xl shadow-slate-900/20;
+  }
+
+  .modal-panel-lg {
+    @apply relative mx-auto my-8 w-full max-w-4xl rounded-2xl border border-slate-100
+           bg-white shadow-2xl shadow-slate-900/20;
+  }
+
+  /* ── Section divider inside modals ── */
+  .form-section {
+    @apply space-y-4;
+  }
+
+  .form-section-title {
+    @apply text-[10px] font-black uppercase tracking-widest text-slate-400 pb-2
+           border-b border-slate-100 mb-3;
+  }
+
+  /* ── Page headers ── */
+  .page-header {
+    @apply flex flex-col gap-4 md:flex-row md:items-center md:justify-between;
+  }
+
+  .eyebrow {
+    @apply text-xs font-bold uppercase tracking-widest text-[#2764ae];
+  }
+
+  .page-title {
+    @apply text-2xl font-extrabold tracking-tight text-slate-900;
+  }
+
+  .page-subtitle {
+    @apply text-sm text-slate-500 mt-0.5 max-w-2xl;
+  }
+
+  /* ── Toolbar ── */
+  .toolbar {
+    @apply flex flex-wrap items-center gap-3;
   }
 }
 
+/* ── Animations ── */
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(3px); }
-  to { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.96); }
+  to   { opacity: 1; transform: scale(1); }
 }
 
 .animate-fade-in {
   animation: fadeIn 0.2s ease-out forwards;
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.18s cubic-bezier(0.34, 1.3, 0.64, 1) forwards;
+}
+
+/* ── Primary color token ── */
+:root {
+  --color-primary: #2764ae;
+  --color-primary-dark: #1f5291;
 }

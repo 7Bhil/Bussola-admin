@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
-import { X, Upload, Quote, User, MapPin, Star, Check, Home, Activity, Archive } from 'lucide-react'
 import api from './api'
 import imageCompression from 'browser-image-compression'
+
+const RATINGS = [5, 4, 3, 2, 1]
 
 export default function TestimonialForm({ onSaved, onCancel, initial }) {
   const [saving, setSaving] = useState(false)
@@ -18,250 +19,177 @@ export default function TestimonialForm({ onSaved, onCancel, initial }) {
     archived: initial?.archived !== undefined ? initial.archived : false
   })
 
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target
-    setFormData(prev => ({ ...prev, [name]: type === 'checkbox' ? checked : value }))
-  }
+  const set = (name, value) => setFormData(p => ({ ...p, [name]: value }))
 
   const handleImageChange = async (e) => {
     const file = e.target.files[0]
     if (!file) return
-
     setUploading(true)
     try {
-      const options = { maxSizeMB: 0.8, maxWidthOrHeight: 1280, useWebWorker: true }
-      const compressedFile = await imageCompression(file, options)
-      const base64 = await imageCompression.getDataUrlFromFile(compressedFile)
-      setFormData(prev => ({ ...prev, image: base64 }))
-    } catch (error) {
-      alert("Erreur lors de la compression de l'image.")
-    } finally {
-      setUploading(false)
-    }
+      const c = await imageCompression(file, { maxSizeMB: 0.5, maxWidthOrHeight: 800 })
+      const b64 = await imageCompression.getDataUrlFromFile(c)
+      set('image', b64)
+    } catch { alert("Erreur lors du traitement de la photo.") }
+    finally { setUploading(false) }
   }
 
   const save = async () => {
-    if (!formData.name.trim()) return alert("Le nom du témoin est obligatoire.")
-    if (!formData.role.trim()) return alert("Le rôle / statut est obligatoire.")
+    if (!formData.name.trim()) return alert("Le nom est obligatoire.")
+    if (!formData.role.trim()) return alert("Le rôle est obligatoire.")
     if (!formData.message.trim()) return alert("Le message est obligatoire.")
-
     setSaving(true)
     try {
-      if (initial?._id) {
-        await api.patch(`/testimonials/${initial._id}`, formData)
-      } else {
-        await api.post('/testimonials', formData)
-      }
+      if (initial?._id) await api.patch(`/testimonials/${initial._id}`, formData)
+      else await api.post('/testimonials', formData)
       onSaved()
     } catch (e) {
-      const msg = e.response?.data?.details || e.response?.data?.message || "Erreur lors de l'enregistrement."
-      alert(msg)
-    } finally {
-      setSaving(false)
-    }
+      alert(e.response?.data?.details || e.response?.data?.message || "Erreur lors de l'enregistrement.")
+    } finally { setSaving(false) }
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4 overflow-y-auto">
-      <div className="w-full max-w-3xl rounded-2xl bg-white shadow-2xl overflow-hidden border border-slate-200 animate-in fade-in zoom-in duration-150 my-auto">
+    <div className="modal-overlay flex items-start justify-center p-4 pt-8">
+      <div className="modal-panel animate-scale-in">
 
-        {/* Modal Header */}
-        <div className="flex items-center justify-between border-b border-slate-100 bg-slate-50 px-6 py-4">
-          <div className="flex items-center gap-3">
-            <div className="p-2 rounded-xl bg-blue-50 text-[#2764ae]">
-              <Quote size={20} />
-            </div>
-            <div>
-              <h3 className="text-lg font-bold text-slate-900">
-                {initial?._id ? 'Modifier le témoignage' : 'Nouveau témoignage d’impact'}
-              </h3>
-              <p className="text-xs text-slate-500">Ajoutez le retour d'un bénéficiaire ou partenaire de l'ONG Busola.</p>
-            </div>
+        {/* ── Header ── */}
+        <div className="flex items-center justify-between border-b border-slate-100 px-6 py-5">
+          <div>
+            <p className="text-[10px] font-bold uppercase tracking-widest text-[#2764ae]">Impact & Récits</p>
+            <h2 className="text-xl font-bold text-slate-900 mt-0.5">
+              {initial?._id ? 'Modifier le témoignage' : "Nouveau témoignage d'impact"}
+            </h2>
           </div>
-
-          <button
-            onClick={onCancel}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 transition"
-          >
-            <X size={20} />
+          <button onClick={onCancel} className="rounded-lg p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition">
+            <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
           </button>
         </div>
 
-        {/* Modal Form Body */}
-        <div className="p-6 space-y-5 max-h-[75vh] overflow-y-auto">
-          <div className="grid gap-4 sm:grid-cols-2">
+        {/* ── Body ── */}
+        <div className="overflow-y-auto max-h-[calc(100vh-260px)] px-6 py-6 space-y-6">
 
-            <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5 flex items-center gap-1">
-                <User size={13} className="text-slate-400" />
-                <span>Nom complet / Prénom *</span>
-              </label>
-              <input
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                placeholder="Ex: Mariam K."
-                className="input-field w-full text-sm rounded-xl border-slate-200 py-2.5"
-                required
-              />
-            </div>
+          {/* Section : Identité */}
+          <div className="form-section">
+            <p className="form-section-title">Identité du témoin</p>
 
-            <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
-                Rôle / Titre / Statut *
-              </label>
-              <input
-                name="role"
-                value={formData.role}
-                onChange={handleChange}
-                placeholder="Ex: Bénéficiaire du projet DSSR"
-                className="input-field w-full text-sm rounded-xl border-slate-200 py-2.5"
-                required
-              />
-            </div>
+            <div className="flex items-start gap-5">
+              {/* Photo de profil */}
+              <div className="shrink-0">
+                {formData.image ? (
+                  <div className="relative">
+                    <img src={formData.image} alt="" className="h-20 w-20 rounded-2xl object-cover border border-slate-200 shadow-sm" />
+                    <button onClick={() => set('image', '')}
+                      className="absolute -top-2 -right-2 rounded-full bg-rose-600 p-0.5 text-white shadow hover:bg-rose-700 transition">
+                      <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  </div>
+                ) : (
+                  <label className="flex h-20 w-20 cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50 hover:border-[#2764ae]/50 hover:bg-blue-50/30 transition">
+                    <svg className="h-7 w-7 text-slate-300" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                    </svg>
+                    <span className="text-[9px] font-bold text-slate-400 mt-1 uppercase">Photo</span>
+                    <input type="file" accept="image/*" onChange={handleImageChange} className="hidden" disabled={uploading} />
+                  </label>
+                )}
+              </div>
 
-            <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5 flex items-center gap-1">
-                <MapPin size={13} className="text-slate-400" />
-                <span>Localisation (Ville / Commune)</span>
-              </label>
-              <input
-                name="location"
-                value={formData.location}
-                onChange={handleChange}
-                placeholder="Ex: Parakou, Nord-Bénin"
-                className="input-field w-full text-sm rounded-xl border-slate-200 py-2.5"
-              />
-            </div>
-
-            <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5 flex items-center gap-1">
-                <Star size={13} className="text-amber-400" />
-                <span>Évaluation (Étoiles)</span>
-              </label>
-              <select
-                name="rating"
-                value={formData.rating}
-                onChange={handleChange}
-                className="input-field w-full text-sm rounded-xl border-slate-200 py-2.5"
-              >
-                <option value={5}>⭐⭐⭐⭐⭐ (5/5)</option>
-                <option value={4}>⭐⭐⭐⭐ (4/5)</option>
-                <option value={3}>⭐⭐⭐ (3/5)</option>
-                <option value={2}>⭐⭐ (2/5)</option>
-                <option value={1}>⭐ (1/5)</option>
-              </select>
-            </div>
-
-            <div className="sm:col-span-2">
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
-                Message / Témoignage *
-              </label>
-              <textarea
-                name="message"
-                value={formData.message}
-                onChange={handleChange}
-                placeholder="Racontez le témoignage de l'intervenant ou du bénéficiaire..."
-                className="input-field w-full h-32 text-sm rounded-xl border-slate-200 py-2"
-                required
-              />
-            </div>
-
-            {/* Options d'affichage */}
-            <div className="sm:col-span-2 space-y-2 border-t border-slate-100 pt-3">
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">
-                Options d'affichage sur le site public
-              </label>
-
-              <div className="grid gap-2 sm:grid-cols-3">
-                <label className="flex items-center gap-2.5 p-3 rounded-xl border border-slate-200 bg-slate-50 cursor-pointer hover:bg-slate-100/70 transition">
-                  <input
-                    type="checkbox"
-                    name="showOnHome"
-                    checked={formData.showOnHome}
-                    onChange={handleChange}
-                    className="h-4 w-4 rounded border-slate-300 text-[#2764ae] focus:ring-[#2764ae]"
-                  />
-                  <span className="text-xs font-bold text-slate-800">Page d'accueil</span>
-                </label>
-
-                <label className="flex items-center gap-2.5 p-3 rounded-xl border border-slate-200 bg-slate-50 cursor-pointer hover:bg-slate-100/70 transition">
-                  <input
-                    type="checkbox"
-                    name="showOnActions"
-                    checked={formData.showOnActions}
-                    onChange={handleChange}
-                    className="h-4 w-4 rounded border-slate-300 text-[#2764ae] focus:ring-[#2764ae]"
-                  />
-                  <span className="text-xs font-bold text-slate-800">Page Actions</span>
-                </label>
-
-                <label className="flex items-center gap-2.5 p-3 rounded-xl border border-rose-200 bg-rose-50/50 cursor-pointer hover:bg-rose-100/50 transition">
-                  <input
-                    type="checkbox"
-                    name="archived"
-                    checked={formData.archived}
-                    onChange={handleChange}
-                    className="h-4 w-4 rounded border-rose-300 text-rose-600 focus:ring-rose-500"
-                  />
-                  <span className="text-xs font-bold text-rose-800">Archiver (Masquer)</span>
-                </label>
+              <div className="flex-1 space-y-3">
+                <div>
+                  <label className="field-label">Nom complet <span className="text-red-400">*</span></label>
+                  <input value={formData.name} onChange={e => set('name', e.target.value)}
+                    className="input-field" placeholder="Ex: Mariam Alassane" />
+                </div>
+                <div>
+                  <label className="field-label">Rôle / Programme <span className="text-red-400">*</span></label>
+                  <input value={formData.role} onChange={e => set('role', e.target.value)}
+                    className="input-field" placeholder="Ex: Bénéficiaire du projet DSSR" />
+                </div>
               </div>
             </div>
 
-            {/* Photo du témoin */}
-            <div className="sm:col-span-2 border-t border-slate-100 pt-4 mt-2">
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
-                Photo du témoin (Optionnel)
-              </label>
+            <div>
+              <label className="field-label">Localisation</label>
+              <input value={formData.location} onChange={e => set('location', e.target.value)}
+                className="input-field" placeholder="Ex: Karimama, Alibori" />
+            </div>
+          </div>
 
-              {formData.image ? (
-                <div className="relative group w-32 h-32 overflow-hidden rounded-2xl border border-slate-200 bg-slate-900">
-                  <img src={formData.image} alt="Prévisualisation" className="w-full h-full object-cover opacity-90" />
-                  <button
-                    type="button"
-                    onClick={() => setFormData(prev => ({ ...prev, image: '' }))}
-                    className="absolute top-2 right-2 bg-rose-600 hover:bg-rose-700 text-white rounded-full p-1 shadow-md transition"
-                    title="Supprimer la photo"
-                  >
-                    <X size={14} />
-                  </button>
-                </div>
-              ) : (
-                <label className="flex flex-col items-center justify-center h-28 w-full cursor-pointer rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50 hover:bg-slate-100/70 transition">
-                  <Upload size={22} className="text-slate-400 mb-1" />
-                  <span className="text-xs font-bold text-slate-600">Ajouter une photo de profil</span>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageChange}
-                    className="hidden"
-                    disabled={uploading}
-                  />
-                </label>
-              )}
+          {/* Section : Message & Note */}
+          <div className="form-section">
+            <p className="form-section-title">Témoignage</p>
+
+            <div>
+              <label className="field-label">Message / Récit <span className="text-red-400">*</span></label>
+              <textarea value={formData.message} onChange={e => set('message', e.target.value)}
+                rows={5} className="textarea-field"
+                placeholder="Racontez le vécu, les changements ressentis ou l'impact de l'ONG sur leur vie..." />
             </div>
 
+            <div>
+              <label className="field-label">Évaluation</label>
+              <div className="flex items-center gap-2">
+                {RATINGS.map(r => (
+                  <button key={r} type="button" onClick={() => set('rating', r)}
+                    className="transition-transform hover:scale-110">
+                    <svg className={`h-8 w-8 transition ${formData.rating >= r ? 'text-amber-400' : 'text-slate-200'}`}
+                      fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                    </svg>
+                  </button>
+                )).reverse()}
+                <span className="ml-2 text-sm font-bold text-slate-700">{formData.rating} / 5</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Section : Visibilité */}
+          <div className="form-section">
+            <p className="form-section-title">Visibilité sur le site public</p>
+            <div className="space-y-2">
+              {[
+                { key: 'showOnHome', label: "Afficher sur la page d'accueil", desc: "Visible dans la section témoignages de la homepage", accent: 'emerald' },
+                { key: 'showOnActions', label: 'Afficher sur la page Actions', desc: "Visible sur la page listant les actions de l'ONG", accent: 'blue' },
+                { key: 'archived', label: 'Archiver (masquer partout)', desc: 'Ce témoignage ne sera visible nulle part', accent: 'rose' },
+              ].map(({ key, label, desc, accent }) => {
+                const checked = formData[key]
+                const border = checked ? `border-${accent}-200` : 'border-slate-200'
+                const bg = checked ? `bg-${accent}-50` : 'bg-white hover:bg-slate-50'
+                return (
+                  <label key={key} className={`flex cursor-pointer items-center gap-4 rounded-xl border p-4 transition ${border} ${bg}`}>
+                    <input type="checkbox" checked={checked} onChange={e => set(key, e.target.checked)} className="sr-only" />
+                    <div className={`relative flex h-5 w-5 shrink-0 items-center justify-center rounded border-2 transition ${
+                      checked ? `border-${accent}-500 bg-${accent}-500` : 'border-slate-300 bg-white'
+                    }`}>
+                      {checked && (
+                        <svg className="h-3 w-3 text-white" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>
+                      )}
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-slate-900">{label}</p>
+                      <p className="text-xs text-slate-500 mt-0.5">{desc}</p>
+                    </div>
+                  </label>
+                )
+              })}
+            </div>
           </div>
         </div>
 
-        {/* Modal Footer */}
-        <div className="flex items-center justify-end gap-3 border-t border-slate-100 bg-slate-50 px-6 py-4">
-          <button
-            onClick={onCancel}
-            className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-bold text-slate-600 hover:bg-slate-100 transition"
-          >
-            Annuler
-          </button>
-          
-          <button
-            onClick={save}
-            disabled={saving || uploading}
-            className="btn-primary inline-flex items-center gap-2 bg-[#2764ae] hover:bg-[#1f5291] text-white px-5 py-2 text-xs font-bold rounded-xl shadow-sm transition"
-          >
-            <Check size={16} />
-            <span>{saving ? 'Enregistrement...' : (initial?._id ? 'Sauvegarder' : 'Créer')}</span>
-          </button>
+        {/* ── Footer ── */}
+        <div className="flex items-center justify-between border-t border-slate-100 px-6 py-4">
+          <p className="text-xs text-slate-400">Les champs * sont obligatoires</p>
+          <div className="flex gap-3">
+            <button onClick={onCancel} className="btn-secondary text-sm px-5">Annuler</button>
+            <button onClick={save} disabled={saving || uploading} className="btn-primary text-sm px-5">
+              {saving ? 'Enregistrement...' : initial?._id ? 'Enregistrer les modifications' : 'Créer le témoignage'}
+            </button>
+          </div>
         </div>
 
       </div>
