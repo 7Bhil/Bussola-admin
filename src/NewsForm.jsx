@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { X, Upload, Newspaper, Tag, User, CheckCircle, AlertCircle, Image as ImageIcon } from 'lucide-react'
 import api from './api'
 import imageCompression from 'browser-image-compression'
 
@@ -27,13 +28,13 @@ export default function NewsForm({ onSaved, onCancel, initial }) {
       const c = await imageCompression(file, { maxSizeMB: 0.8, maxWidthOrHeight: 1400 })
       const b64 = await imageCompression.getDataUrlFromFile(c)
       set('image', b64)
-    } catch { alert("Erreur lors du traitement de l'image.") }
+    } catch { alert("Erreur lors de la compression de l'image.") }
     finally { setUploading(false) }
   }
 
   const save = async () => {
-    if (!formData.title.trim()) return alert("Le titre est obligatoire.")
-    if (!formData.summary.trim()) return alert("Le résumé est obligatoire.")
+    if (!formData.title.trim()) return alert("Le titre principal est obligatoire.")
+    if (!formData.summary.trim()) return alert("Le résumé court est obligatoire.")
     setSaving(true)
     try {
       if (initial?._id) await api.patch(`/news/${initial._id}`, formData)
@@ -45,108 +46,140 @@ export default function NewsForm({ onSaved, onCancel, initial }) {
   }
 
   return (
-    <div className="modal-overlay flex items-start justify-center p-4 pt-6">
-      <div className="modal-panel-lg animate-scale-in">
+    <div className="modal-overlay">
+      <div className="modal-container-lg">
 
-        {/* ── Header ── */}
-        <div className="flex items-center justify-between border-b border-slate-100 px-6 py-5">
-          <div>
-            <p className="text-[10px] font-bold uppercase tracking-widest text-[#2764ae]">Contenus & Médias</p>
-            <h2 className="text-xl font-bold text-slate-900 mt-0.5">
-              {initial?._id ? "Modifier l'actualité" : 'Nouvelle actualité / Communiqué'}
-            </h2>
+        {/* ── Fixed Header ── */}
+        <div className="modal-header">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-100 text-[#2764ae]">
+              <Newspaper size={20} />
+            </div>
+            <div>
+              <h2 className="text-lg font-bold text-slate-900">
+                {initial?._id ? "Modifier l'actualité" : "Nouvelle actualité / Communiqué"}
+              </h2>
+              <p className="text-xs font-medium text-slate-500">Publication sur le site public Busola</p>
+            </div>
           </div>
-          <button onClick={onCancel} className="rounded-lg p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition">
-            <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-            </svg>
+
+          <button onClick={onCancel} className="rounded-xl p-2 text-slate-400 hover:bg-slate-200/80 hover:text-slate-700 transition">
+            <X size={20} />
           </button>
         </div>
 
-        {/* ── Body 2 colonnes ── */}
-        <div className="overflow-y-auto max-h-[calc(100vh-220px)]">
-          <div className="grid md:grid-cols-[1fr_300px] divide-y md:divide-y-0 md:divide-x divide-slate-100">
+        {/* ── Scrollable Body ── */}
+        <div className="modal-body p-0">
+          <div className="grid md:grid-cols-[1fr_320px] divide-y md:divide-y-0 md:divide-x divide-slate-200 min-h-0">
 
-            {/* Colonne principale */}
-            <div className="px-6 py-6 space-y-5">
-              <p className="form-section-title">Contenu de l'article</p>
-
+            {/* Left Column — Content */}
+            <div className="p-6 space-y-5">
               <div>
-                <label className="field-label">Titre principal <span className="text-red-400">*</span></label>
-                <input value={formData.title} onChange={e => set('title', e.target.value)}
-                  className="input-field text-base font-semibold"
-                  placeholder="Ex: Lancement du programme PAGEDA dans le Nord-Bénin" />
+                <label className="field-label flex items-center justify-between">
+                  <span>Titre principal</span>
+                  <span className="text-rose-500 font-bold">* Requis</span>
+                </label>
+                <input
+                  value={formData.title}
+                  onChange={e => set('title', e.target.value)}
+                  className="input-field text-base font-bold text-slate-900"
+                  placeholder="Ex: Lancement du programme PAGEDA dans le Nord-Bénin"
+                />
               </div>
 
               <div>
-                <label className="field-label">Résumé court (aperçu en liste) <span className="text-red-400">*</span></label>
-                <textarea value={formData.summary} onChange={e => set('summary', e.target.value)}
-                  rows={2} className="textarea-field"
-                  placeholder="Une phrase qui accroche le lecteur et résume l'essentiel..." />
+                <label className="field-label flex items-center justify-between">
+                  <span>Résumé court (Affiché dans les listes & aperçus)</span>
+                  <span className="text-rose-500 font-bold">* Requis</span>
+                </label>
+                <textarea
+                  value={formData.summary}
+                  onChange={e => set('summary', e.target.value)}
+                  rows={3}
+                  className="textarea-field"
+                  placeholder="Une phrase percutante qui résume l'essentiel pour le lecteur..."
+                />
               </div>
 
               <div>
-                <label className="field-label">Contenu complet</label>
-                <textarea value={formData.content} onChange={e => set('content', e.target.value)}
-                  rows={8} className="textarea-field"
-                  placeholder="Rédigez ici l'intégralité de votre article..." />
+                <label className="field-label">Contenu complet de l'article</label>
+                <textarea
+                  value={formData.content}
+                  onChange={e => set('content', e.target.value)}
+                  rows={9}
+                  className="textarea-field"
+                  placeholder="Rédigez l'intégralité de votre communiqué ou article ici..."
+                />
               </div>
             </div>
 
-            {/* Colonne droite — Paramètres */}
-            <div className="px-6 py-6 space-y-5 bg-slate-50/50">
-              <p className="form-section-title">Paramètres</p>
-
+            {/* Right Column — Sidebar Parameters */}
+            <div className="p-6 space-y-6 bg-slate-50/70">
+              {/* Category */}
               <div>
-                <label className="field-label">Catégorie</label>
-                <div className="flex flex-wrap gap-2">
+                <label className="field-label flex items-center gap-1.5 text-slate-800">
+                  <Tag size={14} className="text-[#2764ae]" />
+                  <span>Catégorie</span>
+                </label>
+                <div className="grid grid-cols-2 gap-2 mt-2">
                   {CATEGORIES.map(c => (
-                    <button key={c} type="button" onClick={() => set('category', c)}
-                      className={`rounded-lg px-3 py-1.5 text-xs font-semibold border transition ${
+                    <button
+                      key={c}
+                      type="button"
+                      onClick={() => set('category', c)}
+                      className={`rounded-xl px-3 py-2 text-xs font-bold transition border ${
                         formData.category === c
-                          ? 'bg-[#2764ae] text-white border-[#2764ae]'
-                          : 'bg-white text-slate-600 border-slate-200 hover:border-slate-300'
+                          ? 'bg-[#2764ae] text-white border-[#2764ae] shadow-sm'
+                          : 'bg-white text-slate-700 border-slate-300 hover:border-slate-400 hover:bg-slate-100'
                       }`}
-                    >{c}</button>
+                    >
+                      {c}
+                    </button>
                   ))}
                 </div>
               </div>
 
+              {/* Author */}
               <div>
-                <label className="field-label">Auteur</label>
-                <input value={formData.author} onChange={e => set('author', e.target.value)}
-                  className="input-field" placeholder="Équipe Busola" />
+                <label className="field-label flex items-center gap-1.5 text-slate-800">
+                  <User size={14} className="text-[#2764ae]" />
+                  <span>Auteur de l'article</span>
+                </label>
+                <input
+                  value={formData.author}
+                  onChange={e => set('author', e.target.value)}
+                  className="input-field"
+                  placeholder="Ex: Équipe Busola"
+                />
               </div>
 
-              {/* Publication */}
+              {/* Published Radio */}
               <div>
-                <label className="field-label">Statut de publication</label>
-                <div className="space-y-2">
+                <label className="field-label text-slate-800">Statut de publication</label>
+                <div className="space-y-2 mt-2">
                   {[true, false].map(pub => (
-                    <label key={String(pub)} className={`flex cursor-pointer items-center gap-3 rounded-lg border p-3 transition ${
-                      formData.published === pub
-                        ? pub
-                          ? 'border-emerald-200 bg-emerald-50 ring-2 ring-emerald-200 ring-offset-1'
-                          : 'border-amber-200 bg-amber-50 ring-2 ring-amber-200 ring-offset-1'
-                        : 'border-slate-200 bg-white hover:bg-slate-50'
-                    }`}>
-                      <input type="radio" checked={formData.published === pub}
-                        onChange={() => set('published', pub)} className="sr-only" />
-                      <span className={`h-3.5 w-3.5 rounded-full border-2 flex items-center justify-center ${
+                    <label
+                      key={String(pub)}
+                      className={`flex cursor-pointer items-center gap-3 rounded-xl border p-3.5 transition-all ${
                         formData.published === pub
-                          ? pub ? 'border-emerald-500' : 'border-amber-500'
-                          : 'border-slate-300'
-                      }`}>
-                        {formData.published === pub && (
-                          <span className={`h-1.5 w-1.5 rounded-full ${pub ? 'bg-emerald-500' : 'bg-amber-500'}`} />
-                        )}
-                      </span>
+                          ? pub
+                            ? 'border-emerald-500 bg-emerald-50/90 text-emerald-950 font-bold ring-2 ring-emerald-400/30'
+                            : 'border-amber-500 bg-amber-50/90 text-amber-950 font-bold ring-2 ring-amber-400/30'
+                          : 'border-slate-300 bg-white hover:bg-slate-100 text-slate-700'
+                      }`}
+                    >
+                      <input
+                        type="radio"
+                        name="published_status"
+                        checked={formData.published === pub}
+                        onChange={() => set('published', pub)}
+                        className="sr-only"
+                      />
+                      {pub ? <CheckCircle size={18} className="text-emerald-600 shrink-0" /> : <AlertCircle size={18} className="text-amber-600 shrink-0" />}
                       <div>
-                        <p className={`text-sm font-semibold ${pub ? 'text-emerald-800' : 'text-amber-800'}`}>
-                          {pub ? 'Publié' : 'Brouillon'}
-                        </p>
-                        <p className="text-xs text-slate-500">
-                          {pub ? 'Visible sur le site public' : 'Non visible pour les visiteurs'}
+                        <p className="text-xs font-bold">{pub ? 'Publié' : 'Brouillon'}</p>
+                        <p className="text-[11px] font-normal text-slate-500">
+                          {pub ? 'Visible instantanément' : 'Masqué du public'}
                         </p>
                       </div>
                     </label>
@@ -154,40 +187,46 @@ export default function NewsForm({ onSaved, onCancel, initial }) {
                 </div>
               </div>
 
-              {/* Image */}
+              {/* Image Cover */}
               <div>
-                <label className="field-label">Image de couverture</label>
+                <label className="field-label flex items-center gap-1.5 text-slate-800">
+                  <ImageIcon size={14} className="text-[#2764ae]" />
+                  <span>Image de couverture</span>
+                </label>
+
                 {formData.image ? (
-                  <div className="relative overflow-hidden rounded-xl border border-slate-200">
-                    <img src={formData.image} alt="" className="h-36 w-full object-cover" />
-                    <button onClick={() => set('image', '')}
-                      className="absolute top-2 right-2 rounded-md bg-slate-900/70 px-2.5 py-1 text-xs font-semibold text-white hover:bg-red-700 transition">
-                      Retirer
+                  <div className="relative mt-2 overflow-hidden rounded-xl border border-slate-300 bg-slate-900 group">
+                    <img src={formData.image} alt="Aperçu" className="h-36 w-full object-cover" />
+                    <button
+                      type="button"
+                      onClick={() => set('image', '')}
+                      className="absolute top-2 right-2 rounded-lg bg-rose-600 px-2.5 py-1 text-xs font-bold text-white shadow hover:bg-rose-700 transition"
+                    >
+                      Supprimer
                     </button>
                   </div>
                 ) : (
-                  <label className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-slate-200 bg-white py-8 text-center hover:border-[#2764ae]/50 hover:bg-blue-50/20 transition">
-                    <svg className="h-6 w-6 text-slate-400" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
-                    </svg>
-                    <p className="text-xs font-semibold text-slate-600">Ajouter une image</p>
+                  <label className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-slate-300 bg-white p-5 text-center hover:border-[#2764ae] hover:bg-blue-50/40 transition mt-2">
+                    <Upload size={24} className="text-slate-400" />
+                    <p className="text-xs font-bold text-slate-700">Importer une image</p>
                     <input type="file" accept="image/*" onChange={handleImageChange} className="hidden" disabled={uploading} />
                   </label>
                 )}
               </div>
             </div>
+
           </div>
         </div>
 
-        {/* ── Footer ── */}
-        <div className="flex items-center justify-between border-t border-slate-100 px-6 py-4">
-          <p className="text-xs text-slate-400">
-            {uploading ? '⏳ Compression...' : 'Les champs * sont obligatoires'}
+        {/* ── Fixed Footer (Always visible) ── */}
+        <div className="modal-footer">
+          <p className="text-xs font-semibold text-slate-500">
+            {uploading ? '⏳ Compression en cours...' : 'ONG Busola — Contenus'}
           </p>
           <div className="flex gap-3">
-            <button onClick={onCancel} className="btn-secondary text-sm px-5">Annuler</button>
-            <button onClick={save} disabled={saving || uploading} className="btn-primary text-sm px-5">
-              {saving ? 'Publication...' : initial?._id ? 'Enregistrer les modifications' : 'Publier'}
+            <button onClick={onCancel} className="btn-secondary">Annuler</button>
+            <button onClick={save} disabled={saving || uploading} className="btn-primary">
+              {saving ? 'Enregistrement...' : initial?._id ? 'Enregistrer les modifications' : 'Publier'}
             </button>
           </div>
         </div>

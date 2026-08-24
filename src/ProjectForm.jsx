@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { X, Upload, FolderKanban, Palette, Image as ImageIcon, Check } from 'lucide-react'
 import api from './api'
 import imageCompression from 'browser-image-compression'
 
@@ -28,8 +29,8 @@ export default function ProjectForm({ onSaved, initial, onCancel }) {
   }
 
   const save = async () => {
-    if (!formData.title.trim()) return alert("Le titre est obligatoire.")
-    if (!formData.description.trim()) return alert("La description est obligatoire.")
+    if (!formData.title.trim()) return alert("Le nom du projet est obligatoire.")
+    if (!formData.description.trim()) return alert("La description du projet est obligatoire.")
     try {
       if (initial?._id) await api.patch(`/projects/${initial._id}`, formData)
       else await api.post('/projects', formData)
@@ -40,71 +41,83 @@ export default function ProjectForm({ onSaved, initial, onCancel }) {
   }
 
   return (
-    <div className="modal-overlay flex items-start justify-center p-4 pt-10">
-      <div className="modal-panel animate-scale-in">
+    <div className="modal-overlay">
+      <div className="modal-container-md">
 
-        {/* ── Header ── */}
-        <div className="flex items-center justify-between border-b border-slate-100 px-6 py-5">
-          <div>
-            <p className="text-[10px] font-bold uppercase tracking-widest text-[#2764ae]">Contenus & Projets</p>
-            <h2 className="text-xl font-bold text-slate-900 mt-0.5">
-              {initial?._id ? 'Modifier le projet' : "Nouveau projet d'intervention"}
-            </h2>
+        {/* ── Fixed Header ── */}
+        <div className="modal-header">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-100 text-[#2764ae]">
+              <FolderKanban size={20} />
+            </div>
+            <div>
+              <h2 className="text-lg font-bold text-slate-900">
+                {initial?._id ? "Modifier le projet" : "Nouveau projet d'intervention"}
+              </h2>
+              <p className="text-xs font-medium text-slate-500">Piliers stratégiques de l'ONG Busola</p>
+            </div>
           </div>
-          <button
-            onClick={onCancel}
-            className="rounded-lg p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition"
-          >
-            <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-            </svg>
+
+          <button onClick={onCancel} className="rounded-xl p-2 text-slate-400 hover:bg-slate-200/80 hover:text-slate-700 transition">
+            <X size={20} />
           </button>
         </div>
 
-        {/* ── Body ── */}
-        <div className="overflow-y-auto max-h-[calc(100vh-280px)] px-6 py-6 space-y-6">
-
+        {/* ── Scrollable Body ── */}
+        <div className="modal-body">
           {/* Identité */}
-          <div className="form-section">
-            <p className="form-section-title">Identité du projet</p>
+          <div className="space-y-4">
+            <p className="form-section-title">
+              <FolderKanban size={15} />
+              <span>Identité du projet</span>
+            </p>
 
             <div>
-              <label className="field-label">Nom / Titre du projet <span className="text-red-400">*</span></label>
+              <label className="field-label flex items-center justify-between">
+                <span>Titre du projet</span>
+                <span className="text-rose-500 font-bold">* Requis</span>
+              </label>
               <input
                 value={formData.title}
                 onChange={e => set('title', e.target.value)}
-                className="input-field"
+                className="input-field font-bold text-base"
                 placeholder="Ex: Santé Sexuelle et Reproductive (DSSR)"
               />
             </div>
 
             <div>
-              <label className="field-label">Description <span className="text-red-400">*</span></label>
+              <label className="field-label flex items-center justify-between">
+                <span>Description & Objectifs</span>
+                <span className="text-rose-500 font-bold">* Requis</span>
+              </label>
               <textarea
                 value={formData.description}
                 onChange={e => set('description', e.target.value)}
                 rows={4}
                 className="textarea-field"
-                placeholder="Décrivez les objectifs, le public cible et l'impact recherché..."
+                placeholder="Décrivez les objectifs généraux, le public bénéficiaire et l'impact recherché..."
               />
             </div>
           </div>
 
           {/* Apparence */}
-          <div className="form-section">
-            <p className="form-section-title">Apparence & Ordre</p>
+          <div className="space-y-4 pt-2">
+            <p className="form-section-title">
+              <Palette size={15} />
+              <span>Apparence & Tri</span>
+            </p>
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="field-label">Couleur du projet</label>
-                <div className="flex items-center gap-2.5 rounded-lg border border-slate-200 bg-white px-3 py-2 shadow-sm hover:border-slate-300 transition">
+                <label className="field-label">Couleur distinctive</label>
+                <div className="flex items-center gap-3 rounded-xl border border-slate-300 bg-white px-3.5 py-2 shadow-sm hover:border-slate-400 transition">
                   <input
                     type="color"
                     value={formData.color}
                     onChange={e => set('color', e.target.value)}
-                    className="h-8 w-8 cursor-pointer rounded border-0 p-0 bg-transparent"
+                    className="h-8 w-8 cursor-pointer rounded-lg border-0 p-0 bg-transparent"
                   />
-                  <span className="font-mono text-sm text-slate-700 font-semibold">{formData.color.toUpperCase()}</span>
+                  <span className="font-mono text-sm font-bold text-slate-800">{formData.color.toUpperCase()}</span>
                 </div>
               </div>
 
@@ -114,52 +127,52 @@ export default function ProjectForm({ onSaved, initial, onCancel }) {
                   type="number"
                   value={formData.order}
                   onChange={e => set('order', Number(e.target.value))}
-                  className="input-field"
+                  className="input-field font-bold"
                   min={0}
                 />
               </div>
             </div>
           </div>
 
-          {/* Image de couverture */}
-          <div className="form-section">
-            <p className="form-section-title">Image de couverture</p>
+          {/* Image */}
+          <div className="space-y-3 pt-2">
+            <p className="form-section-title">
+              <ImageIcon size={15} />
+              <span>Image de couverture</span>
+            </p>
 
             {formData.coverImage ? (
-              <div className="relative overflow-hidden rounded-xl border border-slate-200 bg-slate-900">
-                <img src={formData.coverImage} alt="Cover" className="h-48 w-full object-cover opacity-90" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+              <div className="relative overflow-hidden rounded-xl border border-slate-300 bg-slate-900">
+                <img src={formData.coverImage} alt="Aperçu" className="h-44 w-full object-cover" />
                 <button
+                  type="button"
                   onClick={() => set('coverImage', '')}
-                  className="absolute top-3 right-3 rounded-lg bg-slate-900/80 px-3 py-1.5 text-xs font-semibold text-white hover:bg-red-700 transition"
+                  className="absolute top-3 right-3 rounded-lg bg-rose-600 px-3 py-1.5 text-xs font-bold text-white shadow hover:bg-rose-700 transition"
                 >
-                  Retirer
+                  Supprimer
                 </button>
               </div>
             ) : (
-              <label className="flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-slate-200 bg-slate-50 py-10 text-center hover:border-[#2764ae]/50 hover:bg-blue-50/30 transition">
-                <div className="mb-3 rounded-xl bg-slate-200 p-3">
-                  <svg className="h-7 w-7 text-slate-500" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
-                  </svg>
-                </div>
-                <p className="text-sm font-semibold text-slate-700">Glissez ou choisissez une image</p>
-                <p className="text-xs text-slate-400 mt-1">JPG, PNG, WEBP — max 5 Mo recommandé</p>
+              <label className="flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-slate-300 bg-slate-50 p-6 text-center hover:border-[#2764ae] hover:bg-blue-50/30 transition">
+                <Upload size={26} className="text-slate-400 mb-2" />
+                <p className="text-xs font-bold text-slate-700">Choisir ou glisser une image</p>
+                <p className="text-[11px] text-slate-400 mt-0.5">JPG, PNG, WEBP — max 5 Mo</p>
                 <input type="file" accept="image/*" onChange={handleImageChange} className="hidden" disabled={uploading} />
               </label>
             )}
           </div>
         </div>
 
-        {/* ── Footer ── */}
-        <div className="flex items-center justify-between border-t border-slate-100 px-6 py-4">
-          <p className="text-xs text-slate-400">
-            {uploading ? '⏳ Compression en cours...' : 'Les champs * sont obligatoires'}
+        {/* ── Fixed Footer ── */}
+        <div className="modal-footer">
+          <p className="text-xs font-semibold text-slate-500">
+            {uploading ? '⏳ Traitement de l\'image...' : 'Projet Pilier'}
           </p>
           <div className="flex gap-3">
-            <button onClick={onCancel} className="btn-secondary text-sm px-5">Annuler</button>
-            <button onClick={save} disabled={uploading} className="btn-primary text-sm px-5">
-              {initial?._id ? 'Enregistrer les modifications' : 'Créer le projet'}
+            <button onClick={onCancel} className="btn-secondary">Annuler</button>
+            <button onClick={save} disabled={uploading} className="btn-primary">
+              <Check size={16} />
+              <span>{initial?._id ? 'Enregistrer les modifications' : 'Créer le projet'}</span>
             </button>
           </div>
         </div>
