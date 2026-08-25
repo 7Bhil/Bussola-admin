@@ -111,6 +111,18 @@ export default function ActionPage() {
     return found ? found.title : 'Projet rattaché'
   }
 
+  if (editing) {
+    return (
+      <div className="page-shell">
+        <ActionForm
+          initial={editing}
+          onCancel={() => setEditing(null)}
+          onSaved={() => { setEditing(null); load() }}
+        />
+      </div>
+    )
+  }
+
   return (
     <div className="page-shell">
       {/* Header Corporate */}
@@ -201,14 +213,7 @@ export default function ActionPage() {
         </div>
       </section>
 
-      {/* Formulaire Modal */}
-      {editing && (
-        <ActionForm
-          initial={editing}
-          onCancel={() => setEditing(null)}
-          onSaved={() => { setEditing(null); load() }}
-        />
-      )}
+
 
       {/* ── 1. VUE EN GRILLE ── */}
       {viewMode === 'grid' && (

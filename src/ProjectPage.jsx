@@ -70,6 +70,18 @@ export default function ProjectPage() {
     }).length
   }
 
+  if (editing) {
+    return (
+      <div className="page-shell">
+        <ProjectForm
+          initial={editing}
+          onCancel={() => setEditing(null)}
+          onSaved={() => { setEditing(null); load() }}
+        />
+      </div>
+    )
+  }
+
   return (
     <div className="page-shell">
       {/* En-tête de page Corporate */}
@@ -107,14 +119,7 @@ export default function ProjectPage() {
         </div>
       </section>
 
-      {/* Formulaire Modal de Création / Édition */}
-      {editing && (
-        <ProjectForm
-          initial={editing}
-          onCancel={() => setEditing(null)}
-          onSaved={() => { setEditing(null); load() }}
-        />
-      )}
+
 
       {/* Grille des Projets */}
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 mt-6">
