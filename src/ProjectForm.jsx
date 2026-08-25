@@ -1,108 +1,182 @@
 import React, { useState } from 'react'
+import { X, Upload, FolderKanban, Palette, Image as ImageIcon, Check } from 'lucide-react'
 import api from './api'
 import imageCompression from 'browser-image-compression'
-
 
 export default function ProjectForm({ onSaved, initial, onCancel }) {
   const [formData, setFormData] = useState({
     title: initial?.title || '',
     description: initial?.description || '',
     coverImage: initial?.coverImage || '',
-    color: initial?.color || '#3498db',
-    order: initial?.order || 0,
+    color: initial?.color || '#2764ae',
+    order: initial?.order ?? 0,
     pillar: initial?.pillar || ''
   })
   const [uploading, setUploading] = useState(false)
 
-  const handleChange = (e) => {
-    const { name, value } = e.target
-    setFormData(prev => ({ ...prev, [name]: value }))
-  }
+  const set = (name, value) => setFormData(p => ({ ...p, [name]: value }))
 
   const handleImageChange = async (e) => {
     const file = e.target.files[0]
     if (!file) return
-    
     setUploading(true)
     try {
-      const options = { maxSizeMB: 1, maxWidthOrHeight: 1920, useWebWorker: true }
-      const compressedFile = await imageCompression(file, options)
-      const base64 = await imageCompression.getDataUrlFromFile(compressedFile)
-      setFormData(prev => ({ ...prev, coverImage: base64 }))
-    } catch (error) {
-      alert("Erreur lors de la compression")
-    } finally {
-      setUploading(false)
-    }
+      const compressed = await imageCompression(file, { maxSizeMB: 0.9, maxWidthOrHeight: 1600 })
+      const b64 = await imageCompression.getDataUrlFromFile(compressed)
+      set('coverImage', b64)
+    } catch { alert("Erreur lors du traitement de l'image.") }
+    finally { setUploading(false) }
   }
 
   const save = async () => {
+    if (!formData.title.trim()) return alert("Le nom du projet est obligatoire.")
+    if (!formData.description.trim()) return alert("La description du projet est obligatoire.")
     try {
-      if (initial?._id) {
-        await api.patch(`/projects/${initial._id}`, formData)
-      } else {
-        await api.post('/projects', formData)
-      }
+      if (initial?._id) await api.patch(`/projects/${initial._id}`, formData)
+      else await api.post('/projects', formData)
       onSaved()
     } catch (e) {
-      const msg = e.response?.data?.details || e.response?.data?.message || "Erreur lors de l'enregistrement"
-      alert(msg)
+      alert(e.response?.data?.details || e.response?.data?.message || "Erreur lors de l'enregistrement.")
     }
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
-      <div className="w-full max-w-2xl rounded-2xl bg-white shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
-        <div className="border-b border-slate-100 bg-slate-50/50 px-6 py-4">
-          <h3 className="text-xl font-bold text-slate-950">
-            {initial?._id ? 'Modifier le projet' : 'Nouveau projet'}
-          </h3>
-          <p className="text-sm text-slate-500">Créez un projet pour regrouper des actions dans la galerie.</p>
+    <div className="modal-overlay">
+      <div className="modal-container-md">
+
+        {/* ── Fixed Header ── */}
+        <div className="modal-header">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-100 text-[#2764ae]">
+              <FolderKanban size={20} />
+            </div>
+            <div>
+              <h2 className="text-lg font-bold text-slate-900">
+                {initial?._id ? "Modifier le projet" : "Nouveau projet d'intervention"}
+              </h2>
+              <p className="text-xs font-medium text-slate-500">Piliers stratégiques de l'ONG Busola</p>
+            </div>
+          </div>
+
+          <button onClick={onCancel} className="rounded-xl p-2 text-slate-400 hover:bg-slate-200/80 hover:text-slate-700 transition">
+            <X size={20} />
+          </button>
         </div>
 
-        <div className="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
-          <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-1">Titre du projet</label>
-            <input name="title" value={formData.title} onChange={handleChange} placeholder="Ex: Pôle Santé & Nutrition" className="input-field" />
-          </div>
+        {/* ── Scrollable Body ── */}
+        <div className="modal-body">
+          {/* Identité */}
+          <div className="space-y-4">
+            <p className="form-section-title">
+              <FolderKanban size={15} />
+              <span>Identité du projet</span>
+            </p>
 
-          <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-1">Description</label>
-            <textarea name="description" value={formData.description} onChange={handleChange} placeholder="Décrivez les objectifs de ce projet..." className="input-field h-32 py-2" />
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-1">Couleur (Hex)</label>
-              <div className="flex gap-2">
-                <input type="color" name="color" value={formData.color} onChange={handleChange} className="h-10 w-10 cursor-pointer rounded border-0 p-0" />
-                <input name="color" value={formData.color} onChange={handleChange} className="input-field font-mono" />
+              <label className="field-label flex items-center justify-between">
+                <span>Titre du projet</span>
+                <span className="text-rose-500 font-bold">* Requis</span>
+              </label>
+              <input
+                value={formData.title}
+                onChange={e => set('title', e.target.value)}
+                className="input-field font-bold text-base"
+                placeholder="Ex: Santé Sexuelle et Reproductive (DSSR)"
+              />
+            </div>
+
+            <div>
+              <label className="field-label flex items-center justify-between">
+                <span>Description & Objectifs</span>
+                <span className="text-rose-500 font-bold">* Requis</span>
+              </label>
+              <textarea
+                value={formData.description}
+                onChange={e => set('description', e.target.value)}
+                rows={4}
+                className="textarea-field"
+                placeholder="Décrivez les objectifs généraux, le public bénéficiaire et l'impact recherché..."
+              />
+            </div>
+          </div>
+
+          {/* Apparence */}
+          <div className="space-y-4 pt-2">
+            <p className="form-section-title">
+              <Palette size={15} />
+              <span>Apparence & Tri</span>
+            </p>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="field-label">Couleur distinctive</label>
+                <div className="flex items-center gap-3 rounded-xl border border-slate-300 bg-white px-3.5 py-2 shadow-sm hover:border-slate-400 transition">
+                  <input
+                    type="color"
+                    value={formData.color}
+                    onChange={e => set('color', e.target.value)}
+                    className="h-8 w-8 cursor-pointer rounded-lg border-0 p-0 bg-transparent"
+                  />
+                  <span className="font-mono text-sm font-bold text-slate-800">{formData.color.toUpperCase()}</span>
+                </div>
+              </div>
+
+              <div>
+                <label className="field-label">Ordre d'affichage</label>
+                <input
+                  type="number"
+                  value={formData.order}
+                  onChange={e => set('order', Number(e.target.value))}
+                  className="input-field font-bold"
+                  min={0}
+                />
               </div>
             </div>
-            <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-1">Ordre d'affichage</label>
-              <input type="number" name="order" value={formData.order} onChange={handleChange} className="input-field" />
-            </div>
           </div>
 
-          <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-1">Image de couverture</label>
-            <input type="file" accept="image/*" onChange={handleImageChange} className="input-field py-1.5" />
-            {formData.coverImage && (
-              <div className="mt-2 relative group w-full h-40 overflow-hidden rounded-xl border border-slate-200">
-                <img src={formData.coverImage} alt="Cover preview" className="w-full h-full object-cover" />
-                <button onClick={() => setFormData(prev => ({...prev, coverImage: ''}))} className="absolute top-2 right-2 bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center shadow-lg hover:bg-red-700 transition">×</button>
+          {/* Image */}
+          <div className="space-y-3 pt-2">
+            <p className="form-section-title">
+              <ImageIcon size={15} />
+              <span>Image de couverture</span>
+            </p>
+
+            {formData.coverImage ? (
+              <div className="relative overflow-hidden rounded-xl border border-slate-300 bg-slate-900">
+                <img src={formData.coverImage} alt="Aperçu" className="h-44 w-full object-cover" />
+                <button
+                  type="button"
+                  onClick={() => set('coverImage', '')}
+                  className="absolute top-3 right-3 rounded-lg bg-rose-600 px-3 py-1.5 text-xs font-bold text-white shadow hover:bg-rose-700 transition"
+                >
+                  Supprimer
+                </button>
               </div>
+            ) : (
+              <label className="flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-slate-300 bg-slate-50 p-6 text-center hover:border-[#2764ae] hover:bg-blue-50/30 transition">
+                <Upload size={26} className="text-slate-400 mb-2" />
+                <p className="text-xs font-bold text-slate-700">Choisir ou glisser une image</p>
+                <p className="text-[11px] text-slate-400 mt-0.5">JPG, PNG, WEBP — max 5 Mo</p>
+                <input type="file" accept="image/*" onChange={handleImageChange} className="hidden" disabled={uploading} />
+              </label>
             )}
           </div>
         </div>
 
-        <div className="flex items-center justify-end gap-3 border-t border-slate-100 bg-slate-50/50 px-6 py-4">
-          <button onClick={onCancel} className="btn-secondary">Annuler</button>
-          <button onClick={save} disabled={uploading} className="btn-primary">
-            {uploading ? 'Compression...' : (initial?._id ? 'Sauvegarder les modifications' : 'Créer le projet')}
-          </button>
+        {/* ── Fixed Footer ── */}
+        <div className="modal-footer">
+          <p className="text-xs font-semibold text-slate-500">
+            {uploading ? '⏳ Traitement de l\'image...' : 'Projet Pilier'}
+          </p>
+          <div className="flex gap-3">
+            <button onClick={onCancel} className="btn-secondary">Annuler</button>
+            <button onClick={save} disabled={uploading} className="btn-primary">
+              <Check size={16} />
+              <span>{initial?._id ? 'Enregistrer les modifications' : 'Créer le projet'}</span>
+            </button>
+          </div>
         </div>
+
       </div>
     </div>
   )

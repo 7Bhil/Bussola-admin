@@ -176,6 +176,20 @@ export default function AdminLayout({ children }) {
                 <LogOut size={18} />
               </button>
             </div>
+            
+            {/* Discrete Developer Credits */}
+            <div className="mt-3 pt-2 border-t border-slate-100 text-center">
+              <span className="text-[10px] text-slate-400">
+                Par{' '}
+                <a href="https://7bhil.vercel.app" target="_blank" rel="noopener noreferrer" className="font-semibold hover:text-[#2764ae]">
+                  C. Bhilal
+                </a>
+                {' '}&amp;{' '}
+                <a href="https://portfolio-jolidon-v2.vercel.app/" target="_blank" rel="noopener noreferrer" className="font-semibold hover:text-[#2764ae]">
+                  H. Jolidon
+                </a>
+              </span>
+            </div>
           </div>
         </div>
       </aside>

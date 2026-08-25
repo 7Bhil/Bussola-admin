@@ -1,92 +1,92 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
-  html,
-  body,
-  #root {
+  html, body, #root { 
+    height: 100%; 
     min-height: 100%;
   }
 
   body {
     margin: 0;
-    background-color: #f8fafc;
+    background-color: #f1f5f9;
     color: #0f172a;
-    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
+
+  * { box-sizing: border-box; }
 }
 
 /* Custom Scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 9999px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
-}
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
+::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
 @layer components {
-  .page-shell {
-    @apply space-y-6 animate-fade-in;
-  }
 
-  .page-header {
-    @apply flex flex-col gap-4 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm md:flex-row md:items-center md:justify-between;
-  }
+  /* ── Layout ── */
+  .page-shell { @apply space-y-6 animate-fade-in; }
 
-  .eyebrow {
-    @apply text-xs font-bold uppercase tracking-widest text-[#2764ae] flex items-center gap-1.5;
-  }
-
-  .page-title {
-    @apply mt-1 text-2xl font-extrabold tracking-tight text-slate-900 md:text-3xl;
-  }
-
-  .page-subtitle {
-    @apply mt-1 max-w-2xl text-sm font-medium leading-relaxed text-slate-500;
-  }
-
+  /* ── Form Controls (High Contrast & Legibility) ── */
   .input-field {
-    @apply w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-[#2764ae] focus:ring-4 focus:ring-[#2764ae]/10 hover:border-slate-400;
+    @apply w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold
+           text-slate-900 shadow-sm outline-none transition-all placeholder:font-normal placeholder:text-slate-400
+           focus:border-[#2764ae] focus:ring-4 focus:ring-[#2764ae]/15 hover:border-slate-400;
   }
 
   .select-field {
-    @apply w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 outline-none transition focus:border-[#2764ae] focus:ring-4 focus:ring-[#2764ae]/10 hover:border-slate-400;
+    @apply w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold
+           text-slate-900 shadow-sm outline-none transition-all
+           focus:border-[#2764ae] focus:ring-4 focus:ring-[#2764ae]/15 hover:border-slate-400;
   }
 
   .textarea-field {
-    @apply w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm leading-relaxed text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-[#2764ae] focus:ring-4 focus:ring-[#2764ae]/10 hover:border-slate-400;
+    @apply w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold
+           leading-relaxed text-slate-900 shadow-sm outline-none transition-all
+           placeholder:font-normal placeholder:text-slate-400 resize-none
+           focus:border-[#2764ae] focus:ring-4 focus:ring-[#2764ae]/15 hover:border-slate-400;
   }
 
-  /* SOLID HIGH-CONTRAST BUTTONS - NO FLASHY IA GRADIENTS */
+  .field-label {
+    @apply block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5;
+  }
+
+  /* ── High Contrast Buttons ── */
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 rounded-xl bg-[#2764ae] px-4 py-2.5 text-sm font-bold text-white shadow-sm transition hover:bg-[#1f5291] focus:ring-4 focus:ring-[#2764ae]/20 disabled:cursor-not-allowed disabled:opacity-60;
+    @apply inline-flex items-center justify-center gap-2 rounded-xl bg-[#2764ae]
+           px-5 py-2.5 text-sm font-bold text-white shadow-md transition-all duration-150
+           hover:bg-[#1f5291] hover:shadow-lg active:scale-[0.98]
+           focus:outline-none focus:ring-4 focus:ring-[#2764ae]/30
+           disabled:cursor-not-allowed disabled:opacity-50;
   }
 
   .btn-secondary {
-    @apply inline-flex items-center justify-center gap-2 rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-400 hover:bg-slate-50 hover:text-slate-900 disabled:cursor-not-allowed disabled:opacity-50;
+    @apply inline-flex items-center justify-center gap-2 rounded-xl border border-slate-300
+           bg-white px-5 py-2.5 text-sm font-bold text-slate-700 shadow-sm transition-all duration-150
+           hover:bg-slate-100 hover:border-slate-400 hover:text-slate-900 active:scale-[0.98]
+           focus:outline-none disabled:cursor-not-allowed disabled:opacity-50;
   }
 
   .btn-danger {
-    @apply inline-flex items-center justify-center gap-2 rounded-xl border border-rose-200 bg-rose-50 px-3.5 py-2 text-sm font-semibold text-rose-700 shadow-sm transition hover:bg-rose-100 hover:text-rose-900;
+    @apply inline-flex items-center justify-center gap-2 rounded-xl border border-rose-200
+           bg-rose-50 px-4 py-2 text-sm font-bold text-rose-700 shadow-sm transition-all duration-150
+           hover:bg-rose-600 hover:text-white hover:border-rose-600 active:scale-[0.98];
   }
 
+  /* ── Cards & Tables ── */
   .card {
     @apply rounded-2xl border border-slate-200 bg-white shadow-sm transition-all duration-200;
   }
 
   .stat-card {
-    @apply relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md hover:border-slate-300;
+    @apply relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 shadow-sm
+           transition-all hover:-translate-y-px hover:shadow-md hover:border-slate-300;
   }
 
   .table-wrap {
@@ -94,35 +94,85 @@
   }
 
   .table-head {
-    @apply border-b border-slate-200 bg-slate-50 text-left text-xs font-bold uppercase tracking-wider text-slate-600;
+    @apply border-b border-slate-200 bg-slate-100/80 text-left text-xs font-extrabold
+           uppercase tracking-wider text-slate-700;
   }
 
-  .table-cell {
-    @apply px-6 py-4 align-middle text-sm text-slate-800;
-  }
+  .table-cell { @apply px-5 py-4 align-middle text-sm font-medium text-slate-900; }
 
   .badge {
-    @apply inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold tracking-wide;
+    @apply inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-bold tracking-wide;
   }
 
   .empty-state {
-    @apply rounded-2xl border-2 border-dashed border-slate-300 bg-white px-6 py-12 text-center font-medium text-slate-500;
+    @apply rounded-2xl border-2 border-dashed border-slate-300 bg-white px-6 py-12
+           text-center text-sm font-semibold text-slate-500;
   }
 
-  .form-panel {
-    @apply rounded-2xl border border-slate-200 bg-white p-6 shadow-sm;
+  /* ── Perfect Modal Architecture (Header / Body / Footer) ── */
+  .modal-overlay {
+    @apply fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-slate-950/75 backdrop-blur-md overflow-hidden;
   }
 
-  .field-label {
-    @apply mb-2 block text-xs font-bold uppercase tracking-wider text-slate-700;
+  .modal-container {
+    @apply flex flex-col w-full max-h-[92vh] rounded-2xl border border-slate-300
+           bg-white shadow-2xl shadow-slate-950/40 overflow-hidden animate-scale-in;
+  }
+
+  .modal-container-md {
+    @apply modal-container max-w-2xl;
+  }
+
+  .modal-container-lg {
+    @apply modal-container max-w-4xl;
+  }
+
+  .modal-header {
+    @apply flex shrink-0 items-center justify-between border-b border-slate-200 bg-slate-50/90 px-6 py-4;
+  }
+
+  .modal-body {
+    @apply flex-1 overflow-y-auto p-6 space-y-6;
+  }
+
+  .modal-footer {
+    @apply flex shrink-0 items-center justify-between border-t border-slate-200 bg-slate-50/90 px-6 py-4;
+  }
+
+  /* ── Section Titles inside Modals ── */
+  .form-section-title {
+    @apply text-xs font-extrabold uppercase tracking-wider text-[#2764ae] pb-2
+           border-b border-slate-200 mb-3 flex items-center gap-2;
+  }
+
+  /* ── Page Headers ── */
+  .page-header {
+    @apply flex flex-col gap-4 md:flex-row md:items-center md:justify-between;
+  }
+
+  .eyebrow {
+    @apply text-xs font-bold uppercase tracking-widest text-[#2764ae];
+  }
+
+  .page-title {
+    @apply text-2xl font-black tracking-tight text-slate-900;
+  }
+
+  .page-subtitle {
+    @apply text-sm text-slate-600 mt-0.5 max-w-2xl font-medium;
   }
 }
 
+/* ── Animations ── */
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(3px); }
-  to { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
-.animate-fade-in {
-  animation: fadeIn 0.2s ease-out forwards;
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to   { opacity: 1; transform: scale(1); }
 }
+
+.animate-fade-in { animation: fadeIn 0.2s ease-out forwards; }
+.animate-scale-in { animation: scaleIn 0.18s cubic-bezier(0.16, 1, 0.3, 1) forwards; }

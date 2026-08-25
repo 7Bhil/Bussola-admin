@@ -17,6 +17,12 @@ import TrafficPage from './TrafficPage'
 import api from './api'
 import './index.css'
 
+// Signature développeurs
+console.log(
+  "%c🚀 Busola Admin — Conçu & développé par CHITOU Bhilal (https://7bhil.vercel.app) & HOUGUE Jolidon (https://portfolio-jolidon-v2.vercel.app/)",
+  "background: #0f172a; color: #38bdf8; font-weight: bold; font-size: 11px; padding: 5px 10px; border-radius: 4px;"
+)
+
 function Root() {
 	const [user, setUser] = useState(null)
 
