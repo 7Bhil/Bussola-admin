@@ -53,6 +53,18 @@ export default function TestimonialsPage() {
   const pages = Math.max(1, Math.ceil(filtered.length / perPage))
   const shown = filtered.slice((page - 1) * perPage, page * perPage)
 
+  if (editing) {
+    return (
+      <div className="page-shell">
+        <TestimonialForm
+          initial={editing}
+          onCancel={() => setEditing(null)}
+          onSaved={() => { setEditing(null); load() }}
+        />
+      </div>
+    )
+  }
+
   return (
     <div className="page-shell">
       {/* Header Corporate */}
@@ -91,14 +103,7 @@ export default function TestimonialsPage() {
         </div>
       </section>
 
-      {/* Modal Form */}
-      {editing && (
-        <TestimonialForm
-          initial={editing}
-          onCancel={() => setEditing(null)}
-          onSaved={() => { setEditing(null); load() }}
-        />
-      )}
+
 
       {/* Table des Témoignages */}
       <div className="table-wrap mt-6 rounded-2xl border border-slate-200 overflow-hidden shadow-sm bg-white">

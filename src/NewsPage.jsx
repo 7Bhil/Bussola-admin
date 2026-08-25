@@ -57,6 +57,18 @@ export default function NewsPage() {
   const pages = Math.max(1, Math.ceil(filtered.length / perPage))
   const shown = filtered.slice((page - 1) * perPage, page * perPage)
 
+  if (editing) {
+    return (
+      <div className="page-shell">
+        <NewsForm
+          initial={editing}
+          onCancel={() => setEditing(null)}
+          onSaved={() => { setEditing(null); load() }}
+        />
+      </div>
+    )
+  }
+
   return (
     <div className="page-shell">
       {/* Header Corporate */}
@@ -106,15 +118,6 @@ export default function NewsPage() {
           <option value="Information">Information</option>
         </select>
       </section>
-
-      {/* Formulaire Modal */}
-      {editing && (
-        <NewsForm
-          initial={editing}
-          onCancel={() => setEditing(null)}
-          onSaved={() => { setEditing(null); load() }}
-        />
-      )}
 
       {/* Table des Actualités */}
       <div className="table-wrap mt-6 rounded-2xl border border-slate-200 overflow-hidden shadow-sm bg-white">
