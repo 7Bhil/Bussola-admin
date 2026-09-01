@@ -13,6 +13,7 @@ import UsersPage from './UsersPage'
 import PrivateRoute from './routes/PrivateRoute'
 import AdminLayout from './AdminLayout'
 import ProfilePage from './ProfilePage'
+import SiteSettingsPage from './SiteSettingsPage'
 import TrafficPage from './TrafficPage'
 import api from './api'
 import './index.css'
@@ -36,6 +37,7 @@ function Root() {
 				<Route path="/login" element={<Login onLogin={(d) => { if (d?.username) localStorage.setItem('username', d.username); window.location.href = '/'; }} />} />
 				
 				<Route path="/" element={<PrivateRoute><AdminLayout><App /></AdminLayout></PrivateRoute>} />
+				<Route path="/settings" element={<PrivateRoute><AdminLayout><SiteSettingsPage /></AdminLayout></PrivateRoute>} />
 				<Route path="/news" element={<PrivateRoute><AdminLayout><NewsPage /></AdminLayout></PrivateRoute>} />
 				<Route path="/projects" element={<PrivateRoute><AdminLayout><ProjectPage /></AdminLayout></PrivateRoute>} />
 				<Route path="/actions" element={<PrivateRoute><AdminLayout><ActionPage /></AdminLayout></PrivateRoute>} />
