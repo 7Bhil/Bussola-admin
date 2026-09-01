@@ -34,33 +34,34 @@ export default function AdminLayout({ children }) {
 
   const navCategories = [
     {
-      title: 'Aperçu',
+      title: 'Aperçu & CMS',
       items: [
-        { path: '/', label: 'Dashboard', hint: 'Vue générale', icon: LayoutDashboard },
-        { path: '/traffic', label: 'Trafic', hint: 'Analytics du site', icon: BarChart3 },
+        { path: '/', label: 'Dashboard', icon: LayoutDashboard },
+        { path: '/settings', label: 'Apparence & CMS', icon: Sparkles },
+        { path: '/traffic', label: 'Analytics Trafic', icon: Activity },
       ]
     },
     {
-      title: 'Contenus & Projets',
+      title: 'Contenus',
       items: [
-        { path: '/news', label: 'Actualités', hint: 'Articles et annonces', icon: Newspaper },
-        { path: '/projects', label: 'Projets', hint: 'Piliers de l\'ONG', icon: FolderKanban },
-        { path: '/actions', label: 'Actions', hint: 'Programmes terrain', icon: Activity },
-        { path: '/testimonials', label: 'Témoignages', hint: "Retours d'impact", icon: Quote },
+        { path: '/news', label: 'Actualités', icon: Newspaper },
+        { path: '/projects', label: 'Projets', icon: FolderKanban },
+        { path: '/actions', label: 'Actions', icon: BarChart3 },
+        { path: '/testimonials', label: 'Témoignages', icon: Quote },
       ]
     },
     {
-      title: 'Communauté',
+      title: 'Interactions',
       items: [
-        { path: '/messages', label: 'Messages', hint: 'Contact public', icon: Mail },
-        { path: '/subscribers', label: 'Abonnés', hint: 'Newsletter', icon: Users },
+        { path: '/messages', label: 'Messages', icon: Mail },
+        { path: '/subscribers', label: 'Abonnés', icon: Users },
       ]
     },
     {
-      title: 'Système',
+      title: 'Administration',
       items: [
-        { path: '/users', label: 'Utilisateurs', hint: 'Gestion d\'accès', icon: ShieldCheck },
-        { path: '/profile', label: 'Mon Profil', hint: 'Sécurité et compte', icon: UserCheck },
+        { path: '/users', label: 'Utilisateurs', icon: ShieldCheck },
+        { path: '/profile', label: 'Mon Profil', icon: UserCheck },
       ]
     }
   ]
